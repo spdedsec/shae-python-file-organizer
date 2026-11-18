@@ -1,0 +1,45 @@
+.name: shae-python-file-organizer
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run local test (make test)
+        run: make test
+
+      - name: Build source archive
+        run: |
+          mkdir -p dist
+          tar czf dist/shae-python-file-organizer-0.1.0-src.tar.gz \
+            --exclude='.git' \
+            src scripts Makefile README.md DESIGN.md LICENSE docs .github
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v0.1.0 \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "shae-python-file-organizer v0.1.0" \
+            --notes "Initial release. Dependency-free Python file organizer CLI.
+
+Commands: organize, list, undo, watch.
+
+See README.md for usage." \
+            dist/shae-python-file-organizer-0.1.0-src.tar.gz
