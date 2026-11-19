@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "echo 'CLI tool - no build needed'",
+  "outputDirectory": ".",
+  "framework": "python"
+}
